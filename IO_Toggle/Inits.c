@@ -1,8 +1,6 @@
 #include <main.h>
 #define ADC1_DR    ((uint32_t)0x4001244C)
 
-
-
 /*=============* Delay Function *================*/
 void wait(int time)
 {
@@ -170,6 +168,316 @@ void GPIO_init()
   GPIO_PinAFConfig(TOUCH_SCK_PORT,TOUCH_SCK_PinSource,TOUCH_GPIO_AF);
   GPIO_PinAFConfig(TOUCH_MOSI_PORT,TOUCH_MOSI_PinSource,TOUCH_GPIO_AF);
   GPIO_PinAFConfig(TOUCH_MISO_PORT,TOUCH_MISO_PinSource,TOUCH_GPIO_AF);
+#endif
+  
+#if(USE_FMC)
+  /*Init FMC*/
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;       //FMC SDnWE
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource0, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_2;       //FMC SDnE0
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource2, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_3;       //FMC SDnSCKE0
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource3, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;       //FMC D2
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_8;       //FMC D13
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource8, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_9;       //FMC D14
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource9, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_10;       //FMC D15
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource10, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_14;       //FMC D0
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15;       //FMC D1
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource15, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15;       //FMC SDnCAS
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource15, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_8;       //FMC SDCLK
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource8, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_5;       //FMC BA1
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource5, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_4;       //FMC BA0
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource4, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_2;       //FMC A12
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource2, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_1;       //FMC A11
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource1, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;       //FMC A10
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOG, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOG, GPIO_PinSource0, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15;       //FMC A9
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource15, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_14;       //FMC A8
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource14, GPIO_AF_FMC);
+  
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_13;       //FMC A7
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource13, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_12;       //FMC A6
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource12, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_11;       //FMC SDnRAS
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource11, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_5;       //FMC A5
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource5, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_4;       //FMC A4
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource4, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_3;       //FMC A3
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource3, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_2;       //FMC A2
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource2, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_1;       //FMC A1
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource1, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;       //FMC A0
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOF, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOF, GPIO_PinSource0, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_15;       //FMC D12
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource15, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_14;       //FMC D11
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource14, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_13;       //FMC D10
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource13, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_12;       //FMC D9
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource12, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_11;       //FMC D8
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource11, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_10;       //FMC D7
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource10, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_9;       //FMC D6
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource9, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_8;       //FMC D5
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource8, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_7;       //FMC D4
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource7, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_1;       //FMC nBL1
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource1, GPIO_AF_FMC);
+  
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_0;       //FMC nBL0
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOE, GPIO_PinSource0, GPIO_AF_FMC);
+  
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource0, GPIO_AF_FMC);
 #endif
   
 }
@@ -401,6 +709,108 @@ void Device_Init()
 #endif
   //PWM_Config(500); 
 }
+
+void FMC_Init()
+{
+  uint32_t timeout = SDRAM_TIMEOUT;
+  RCC_AHB3PeriphClockCmd(RCC_AHB3Periph_FMC, ENABLE);
+  
+  FMC_SDRAMTimingInitTypeDef FMC_SDRAMTimingInit;
+  FMC_SDRAMTimingInit.FMC_LoadToActiveDelay = 2;
+  FMC_SDRAMTimingInit.FMC_ExitSelfRefreshDelay = 7;
+  FMC_SDRAMTimingInit.FMC_SelfRefreshTime = 4;
+  FMC_SDRAMTimingInit.FMC_RowCycleDelay = 7;
+  FMC_SDRAMTimingInit.FMC_WriteRecoveryTime = 2;
+  FMC_SDRAMTimingInit.FMC_RPDelay = 2;
+  FMC_SDRAMTimingInit.FMC_RCDDelay = 2;  
+  
+  FMC_SDRAMInitTypeDef  FMC_SDRAMInitStructure;
+  FMC_SDRAMInitStructure.FMC_Bank = FMC_Bank1_SDRAM;
+  FMC_SDRAMInitStructure.FMC_ColumnBitsNumber = FMC_ColumnBits_Number_9b;
+  FMC_SDRAMInitStructure.FMC_RowBitsNumber = FMC_RowBits_Number_13b;
+  FMC_SDRAMInitStructure.FMC_SDMemoryDataWidth = FMC_SDMemory_Width_16b;
+  FMC_SDRAMInitStructure.FMC_InternalBankNumber = FMC_InternalBank_Number_4;
+  FMC_SDRAMInitStructure.FMC_CASLatency = FMC_CAS_Latency_3;
+  FMC_SDRAMInitStructure.FMC_WriteProtection = FMC_Write_Protection_Disable;
+  FMC_SDRAMInitStructure.FMC_SDClockPeriod = FMC_SDClock_Period_2;
+  FMC_SDRAMInitStructure.FMC_ReadBurst = FMC_Read_Burst_Disable;
+  FMC_SDRAMInitStructure.FMC_ReadPipeDelay = FMC_ReadPipe_Delay_1;
+  FMC_SDRAMInitStructure.FMC_SDRAMTimingStruct = &FMC_SDRAMTimingInit;
+  
+  FMC_SDRAMInit(&FMC_SDRAMInitStructure);
+  
+  FMC_SDRAMCommandTypeDef  FMC_SDRAMCommandStructure;  
+  FMC_SDRAMCommandStructure.FMC_CommandMode = FMC_Command_Mode_CLK_Enabled;
+  FMC_SDRAMCommandStructure.FMC_CommandTarget = FMC_Command_Target_bank1;
+  FMC_SDRAMCommandStructure.FMC_AutoRefreshNumber = 1;
+  FMC_SDRAMCommandStructure.FMC_ModeRegisterDefinition = 0;
+ 
+  /* Wait until the SDRAM controller is ready */ 
+	timeout = SDRAM_TIMEOUT;
+	while (FMC_GetFlagStatus(FMC_Bank1_SDRAM, FMC_FLAG_Busy) != RESET && timeout--);
+	/* Send the command */
+	FMC_SDRAMCmdConfig(&FMC_SDRAMCommandStructure);
+        
+  /* Configure a PALL (precharge all) command */ 
+	FMC_SDRAMCommandStructure.FMC_CommandMode            = FMC_Command_Mode_PALL;
+	FMC_SDRAMCommandStructure.FMC_CommandTarget          = FMC_Command_Target_bank1;
+	FMC_SDRAMCommandStructure.FMC_AutoRefreshNumber      = 1;
+	FMC_SDRAMCommandStructure.FMC_ModeRegisterDefinition = 0;
+        
+  /* Wait until the SDRAM controller is ready */  
+	timeout = SDRAM_TIMEOUT;
+	while (FMC_GetFlagStatus(FMC_Bank1_SDRAM, FMC_FLAG_Busy) && timeout--);
+	/* Send the command */
+	FMC_SDRAMCmdConfig(&FMC_SDRAMCommandStructure);
+        
+  /* Configure a Auto-Refresh command */ 
+	FMC_SDRAMCommandStructure.FMC_CommandMode            = FMC_Command_Mode_AutoRefresh;
+	FMC_SDRAMCommandStructure.FMC_CommandTarget          = FMC_Command_Target_bank1;
+	FMC_SDRAMCommandStructure.FMC_AutoRefreshNumber      = 8;
+	FMC_SDRAMCommandStructure.FMC_ModeRegisterDefinition = 0;
+	
+	/* Wait until the SDRAM controller is ready */
+	timeout = SDRAM_TIMEOUT;
+	while (FMC_GetFlagStatus(FMC_Bank1_SDRAM, FMC_FLAG_Busy) && timeout--);
+	/* Send the command */
+	FMC_SDRAMCmdConfig(&FMC_SDRAMCommandStructure);
+  
+  /* Configure a load Mode register command */
+	FMC_SDRAMCommandStructure.FMC_CommandMode            = FMC_Command_Mode_LoadMode;
+	FMC_SDRAMCommandStructure.FMC_CommandTarget          = FMC_Command_Target_bank1;
+	FMC_SDRAMCommandStructure.FMC_AutoRefreshNumber      = 1;
+	FMC_SDRAMCommandStructure.FMC_ModeRegisterDefinition = 0x0231;
+	
+	/* Wait until the SDRAM controller is ready */
+	timeout = SDRAM_TIMEOUT;
+	while (FMC_GetFlagStatus(FMC_Bank1_SDRAM, FMC_FLAG_Busy) && timeout--);
+	/* Send the command */
+	FMC_SDRAMCmdConfig(&FMC_SDRAMCommandStructure);
+        
+   /* Set the device refresh counter */
+	FMC_SetRefreshCount(680);
+   
+   /* Wait until the SDRAM controller is ready */ 
+	timeout = SDRAM_TIMEOUT;
+	while(FMC_GetFlagStatus(FMC_Bank1_SDRAM, FMC_FLAG_Busy) != RESET && timeout--);
+        
+   /* Check if everything goes right */
+	/* Write 0x10 at location 0x50 and check if result is the same on read operation */
+	/*TM_SDRAM_Write8(0x50, 0x10);
+	if (TM_SDRAM_Read8(0x50) == 0x10) {
+		//Initialized OK
+		return 1;
+	}
+	//Not OK
+	return 0;*/
+   
+  
+  
+}
+
+
+
+
 
 
 

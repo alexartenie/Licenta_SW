@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <main.h>
 #include "stm32f4xx.h"
 #include "SSD1963.c"
 #include <LCD_App.c>
@@ -24,9 +25,10 @@ int main(void)
   
   //TIM4_init();
   create_task("Blink",0,100,&Blink_task);
-  create_task("LCD Update",0,5,&LCD_Refresh_task);
+  create_task("LCD Update",0,100,&LCD_Refresh_task);
   create_task("Nope",0,0,&Nope_task);
-  create_task("TOUCH",0,20,&Check_Touch_task);
+  create_task("TOUCH",0,20,&Check_Touch_task); 
+  
   for(int i=0;i<50;i++)
     Scope_Sim[i]=i*2;
   for(int i=0;i<50;i++)
@@ -34,6 +36,8 @@ int main(void)
   SystemInit();
   Device_Init();
   Activate_Scope();
+  FMC_Init();  
+  
   NVIC_init();  
   SysTick_Config(SystemCoreClock / 1000);
   while (1)
@@ -83,22 +87,21 @@ void SysTick_Handler()
 }
 
 void LCD_Refresh_task()
-{  
+{   
   char print[20];
+  
   //LCD_Draw_Rectangle(last_sample_count,40,20,20,Yellow);
   // if(last_sample_count<sample_counter)
    //{
      static int i;
      i++;
      if(i>99)
-       i=0;
+       i=0; 
     // for(int i=x_old;i<100;i++)
      {
        
       //y=(sample_buff[i]-20)*10;
-      y=Scope_Window_dY/2+ScopeA_Offset-Scope_Sim[i]/2;//-sample_buff[i];
-      //sprintf(print,"ADC%d:%d",i,y);
-    //   ssd1963_PutText(360,17*i,print,Black,White);
+      y=Scope_Window_dY/2+ScopeA_Offset-Scope_Sim[i]/2;//-sample_buff[i];     
        x+=1;//Scope_X_Step;
        if(x>Scope_Window_dX-8)
         x=0;

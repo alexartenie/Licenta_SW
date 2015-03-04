@@ -28,7 +28,13 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
-
+    
+#define SDRAM_ADDR      0xC0000000
+#define SDRAM_TIMEOUT	((uint32_t)0xFFFF) 
+#define TM_SDRAM_Write8(address, value)		*(__IO uint8_t *) (SDRAM_ADDR + address) = value
+#define TM_SDRAM_Read8(address)			(*(__IO uint8_t *) (SDRAM_ADDR + address))
+#define TM_SDRAM_Write16(address, value)	*(__IO uint16_t *) (SDRAM_ADDR + address) = value
+#define TM_SDRAM_Read16(address)		(*(__IO uint16_t *) (SDRAM_ADDR + address))
 
 /*==============* Peripheral destination *============
   TIM2 - Scope ADC Trigger
@@ -76,6 +82,7 @@ int ScopeB_Offset;
 #define USE_SCOPE_B             0
 #define Scope_Grid_Enabled      1
 #define USE_LEDS                1
+#define USE_FMC                 1
 /*===================================================*/
 
 /*=============* Functions Declaration *==============*/
