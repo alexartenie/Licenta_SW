@@ -477,7 +477,10 @@ void GPIO_init()
   GPIO_Init(GPIOE, &GPIO_InitStructure);
   GPIO_PinAFConfig(GPIOE, GPIO_PinSource0, GPIO_AF_FMC);
   
-  GPIO_PinAFConfig(GPIOC, GPIO_PinSource0, GPIO_AF_FMC);
+  /*Init GPIO for LCD SDCARD*/
+   GPIO_InitStructure.GPIO_Pin=GPIO_Pin_2;
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+   GPIO_Init(GPIOD, &GPIO_InitStructure);
 #endif
   
 }
@@ -490,6 +493,7 @@ void Scope_ADC_init()
   ADC_InitTypeDef ADC_InitStructure;
   
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_Rising;
+  ADC_InitStructure.ADC_Resolution = ADC_Resolution_10b;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_TRGO;
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStructure.ADC_NbrOfConversion = 2;
@@ -611,7 +615,7 @@ void TOUCH_SPI_Init()
     SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
     SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
     SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;
-    SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
+    SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
     SPI_InitStruct.SPI_FirstBit = SPI_FirstBit_LSB;    
     
     SPI_Init(TOUCH_SPI,&SPI_InitStruct);
@@ -708,6 +712,7 @@ void Device_Init()
   TOUCH_SPI_Init();
 #endif
   //PWM_Config(500); 
+  
 }
 
 void FMC_Init()
@@ -802,11 +807,19 @@ void FMC_Init()
 		return 1;
 	}
 	//Not OK
-	return 0;*/
-   
-  
-  
+	return 0;*/  
 }
+
+void LCD_SD_Init()
+{
+#if(USE_LCD_SD)
+  disk_initialize(0);
+  LCD_SD_Mount();
+#endif
+}
+
+
+
 
 
 

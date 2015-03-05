@@ -51,7 +51,7 @@
 #define Scope_ADC_Burst 1000
 #define Scope_TIM TIM2
 #define Scope_Grid 25
-#define Scope_Grid_Color DarkYellow
+#define Scope_Grid_Color 0xFFFF
 #define Scope_Window_dX (((int)(375/Scope_Grid))*Scope_Grid+7)
 #define Scope_Window_dY (((int)(225/Scope_Grid))*Scope_Grid+7)
 /*====================================================*/
@@ -75,14 +75,16 @@ int ScopeB_Offset;
 /*=====================================================*/
 
 /*=============* System Configuration *==============*/
-#define USE_TOUCH               1
-#define USE_LCD                 1
+#define USE_TOUCH               0
+#define USE_LCD                 0
 #define USE_SCOPE               1
 #define USE_SCOPE_A             1
 #define USE_SCOPE_B             0
 #define Scope_Grid_Enabled      1
 #define USE_LEDS                1
 #define USE_FMC                 1
+#define LCD_Buffered            0
+#define USE_LCD_SD              1
 /*===================================================*/
 
 /*=============* Functions Declaration *==============*/

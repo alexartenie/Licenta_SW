@@ -29,7 +29,7 @@ ITMportsTermIO=0
 ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
 [DebugChecksum]
-Checksum=-984634403
+Checksum=1645792975
 [CodeCoverage]
 Enabled=_ 0
 [CallStack]
@@ -39,14 +39,6 @@ MixedMode=1
 [stlink]
 stlinkserialNo=2798FD0D
 stlinkfoundProbes=
-[CallStackLog]
-Enabled=0
-[DriverProfiling]
-Enabled=0
-Mode=3
-Graph=0
-Symbiont=0
-Exclusions=
 [SfrWindow]
 Show=1 1
 Sort=4 0
@@ -91,6 +83,14 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
+[CallStackLog]
+Enabled=0
+[DriverProfiling]
+Enabled=0
+Mode=3
+Graph=0
+Symbiont=0
+Exclusions=
 [Disassemble mode]
 mode=0
 [Breakpoints2]

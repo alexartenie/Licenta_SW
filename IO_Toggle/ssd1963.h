@@ -1,6 +1,6 @@
 //Pin Define
 
-#define LCD_Buffered 0
+
 
 #define LCD_CTRL_PORT_RST                      GPIOC
 #define LCD_CTRL_PIN_RST                          GPIO_Pin_13

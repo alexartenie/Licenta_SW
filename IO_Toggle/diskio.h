@@ -12,11 +12,8 @@ extern "C" {
 #define _USE_WRITE	1	/* 1: Enable disk_write function */
 #define _USE_IOCTL	1	/* 1: Enable disk_ioctl fucntion */
 
-#include <stm32f4xx.h>
 #include "integer.h"
-#include "spi.h"
 
-GPIO_InitTypeDef GPIO_InitStruct;
 
 /* Status of Disk Functions */
 typedef BYTE	DSTATUS;
@@ -37,10 +34,10 @@ typedef enum {
 
 DSTATUS disk_initialize (BYTE pdrv);
 DSTATUS disk_status (BYTE pdrv);
-DRESULT disk_read (BYTE pdrv, BYTE*buff, DWORD sector, UINT count);
-DRESULT disk_write (BYTE pdrv, const BYTE* buff, DWORD sector, UINT count);
+DRESULT disk_read (BYTE pdrv, BYTE*buff, DWORD sector, BYTE count);
+DRESULT disk_write (BYTE pdrv, const BYTE* buff, DWORD sector, BYTE count);
 DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
-DWORD get_fattime (void);
+void	disk_timerproc (void);
 
 /* Disk Status Bits (DSTATUS) */
 #define STA_NOINIT		0x01	/* Drive not initialized */
@@ -83,17 +80,6 @@ DWORD get_fattime (void);
 #define CT_SDC		(CT_SD1|CT_SD2)	/* SD */
 #define CT_BLOCK	0x08		/* Block addressing */
 
-/* SDC specific commands */
-#define SDC_GO_IDLE_STATE 			0
-#define SDC_SEND_OP_COND 			1
-#define SDC_SEND_CSD 				9
-#define SDC_SEND_CID				10
-#define SDC_STOP_TRANSMISSION		12
-#define SDC_SEND_STATUS				13
-#define SDC_READ_SINGLE_BLOCK		17
-#define SDC_READ_MULTIPLE_BLOCK 	18
-#define SDC_WRITE_BLOCK				24
-#define SDC_WRITE_MULTIPLE_BLOCK 	25
 
 #ifdef __cplusplus
 }
