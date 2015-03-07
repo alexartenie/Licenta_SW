@@ -162,6 +162,7 @@ void ssd1963_Test(void);
 unsigned int ssd1963_GetCode(void);
 void ssd1963_WriteData(unsigned int dat);
 void ssd1963_WriteIndex(unsigned int idx);
+void  LCD_WriteBuff(unsigned int dat);
 
 void ssd1963_PutText(unsigned int x,unsigned int y,char *pString,unsigned int charColor,unsigned int bkColor);
 

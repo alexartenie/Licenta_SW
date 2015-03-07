@@ -22,23 +22,11 @@ typedef struct
   int Text_Align_Y;
 }Button;
 
-#if LCD_Buffered
-  int LCD_Buffer[480*272];
-#endif
-
 void Draw_Button_Frame(Button*);
 
 void LCD_Draw_Rectangle(int x,int y,int dx,int dy,int color)
 {
-#if LCD_Buffered
-  {
-    for (int i=0; i<dx; i++)
-        for(int j=0; j<dy; j++)
-            LCD_Buffer[i][j]=color;
-  }
-#else
     ssd1963_ClearZone(x,y,dx,dy,color);
-#endif
 }
 
 void Add_Button(Button* B)
@@ -137,21 +125,6 @@ void Draw_Button_Frame(Button* B)
                       LCD_Draw_Rectangle(B->x,B->y,B->dx+2,B->dy+2,B->frame_color);
 }
 
-void LCD_Refresh()
-{
-#if LCD_Buffered
-    ssd1963_SetWindows(0, 0, 67, 119);
-
-    GPIO_ResetBits(GPIOC,LCD_CTRL_PIN_CS);//Clr_Cs;
-    ssd1963_WriteIndex(0x002c);
-    GPIO_SetBits(GPIOC,LCD_CTRL_PIN_RS);//Set_Rs;
-  
-    for (int i=0; i<67; i++)
-        for(int j=0; j<119; j++)
-            ssd1963_WriteData(LCD_Buffer[i][j]);
-#endif
-}
-
 void Draw_Image(int x,int y,int dx,int dy,unsigned long img[],int Transparency)
 {
   /*for (int i = y; i <y + dy; i++)
@@ -177,7 +150,6 @@ void Draw_Image(int x,int y,int dx,int dy,unsigned long img[],int Transparency)
   }
   GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
 }
-
 
 void Menu_Enter()
 {
@@ -320,7 +292,10 @@ void LCD_SD_Write(char buffer[])
          ssd1963_PutText(20,200,print,Black,White);
 }
 
-
+void Prepare_ScopeImage()
+{
+  
+}
 
 
 

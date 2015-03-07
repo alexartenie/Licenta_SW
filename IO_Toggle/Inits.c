@@ -204,6 +204,14 @@ void GPIO_init()
   GPIO_Init(GPIOD, &GPIO_InitStructure);
   GPIO_PinAFConfig(GPIOD, GPIO_PinSource0, GPIO_AF_FMC);
   
+  GPIO_InitStructure.GPIO_Pin=GPIO_Pin_1;       //FMC D3
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOD, &GPIO_InitStructure);
+  GPIO_PinAFConfig(GPIOD, GPIO_PinSource1, GPIO_AF_FMC);
+  
   GPIO_InitStructure.GPIO_Pin=GPIO_Pin_8;       //FMC D13
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -476,8 +484,9 @@ void GPIO_init()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_Init(GPIOE, &GPIO_InitStructure);
   GPIO_PinAFConfig(GPIOE, GPIO_PinSource0, GPIO_AF_FMC);
-  
+#endif 
   /*Init GPIO for LCD SDCARD*/
+#if(USE_LCD_SD)
    GPIO_InitStructure.GPIO_Pin=GPIO_Pin_2;
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
    GPIO_Init(GPIOD, &GPIO_InitStructure);
@@ -626,16 +635,16 @@ void TOUCH_SPI_Init()
 
 void LCD_Init()
 {
-   if(USE_LCD)
+#if(USE_LCD)
   {
   //Initializarea LCD Display-ului
     ssd1963_Initialization();
-    ssd1963_SetWindows(10,10,200,200);
     // Clear LCD
     ssd1963_Clear(Black);
    // Draw_Image(100,100,96,96,GFX_pika2,0);
    // Menu_Enter();
   }
+#endif
 }
 
 void PWM_init()

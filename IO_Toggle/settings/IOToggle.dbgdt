@@ -34,7 +34,7 @@
         
         
       <ShowCodeCoverage>1</ShowCodeCoverage><ShowInstrProfiling>1</ShowInstrProfiling></Disassembly>
-    <QuickWatch><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>100</item><item>150</item><item>100</item><item>102</item></col-widths><QWatchHistory><item>sdram</item><item>array[10560]</item><item>array[0x5555]</item><item>r</item><item>Scope_Sim[i]</item></QWatchHistory></QuickWatch><WATCH_1><expressions><item>array[i]</item><item>sdram[i]</item><item>i</item><item>x1</item><item>x</item><item></item></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>100</item><item>150</item><item>100</item><item>241</item></col-widths></WATCH_1></Static>
+    <QuickWatch><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>100</item><item>150</item><item>100</item><item>102</item></col-widths><QWatchHistory><item>sdram</item><item>array[10560]</item><item>array[0x5555]</item><item>r</item><item>Scope_Sim[i]</item></QWatchHistory></QuickWatch><WATCH_1><expressions><item>array[i]</item><item>sdram[i]</item><item>i</item><item>x1</item><item>x</item><item/></expressions><col-names><item>Expression</item><item>Location</item><item>Type</item><item>Value</item></col-names><col-widths><item>100</item><item>150</item><item>100</item><item>241</item></col-widths></WATCH_1></Static>
     <Windows>
       
       

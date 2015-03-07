@@ -56,6 +56,17 @@
 #define Scope_Window_dY (((int)(225/Scope_Grid))*Scope_Grid+7)
 /*====================================================*/
 
+/*======External RAM viriable locations *=============*/
+#define RAM_SCOPEA_SIZE 10000000
+#define RAM_SCOPEB_SIZE 10000000
+#define RAM_LCD_SIZE    130560
+unsigned long *ScopeA_buff = (unsigned long *)(0xC0000000);  
+unsigned long *ScopeB_buff = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE);
+unsigned long *LCD_buff    = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE);
+unsigned long *Start_Image = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*1);
+unsigned long *Scope_Image = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*2);
+unsigned long *ImageToWrite;
+/*====================================================*/
 
 /*===============* Constants for System State *=========*/
 #define Active_Scope_Channels    1
@@ -75,16 +86,16 @@ int ScopeB_Offset;
 /*=====================================================*/
 
 /*=============* System Configuration *==============*/
-#define USE_TOUCH               0
-#define USE_LCD                 0
+#define USE_TOUCH               1
+#define USE_LCD                 1
 #define USE_SCOPE               1
 #define USE_SCOPE_A             1
 #define USE_SCOPE_B             0
 #define Scope_Grid_Enabled      1
 #define USE_LEDS                1
 #define USE_FMC                 1
-#define LCD_Buffered            0
-#define USE_LCD_SD              1
+#define LCD_Buffered            1
+#define USE_LCD_SD              0
 /*===================================================*/
 
 /*=============* Functions Declaration *==============*/
@@ -109,6 +120,7 @@ void Nope_task(void);
 void Blink_task(void);
 void Check_Touch_task(void);
 void PWM_Config(int);
+void ScopeAGetData(void);
 /*=====================================================*/
 
 /*================* Global Variables *=================*/
@@ -116,6 +128,8 @@ int sample_counter;
 int last_sample_count;
 volatile int sample_buff[];
 volatile int x,y,x_old,y_old;
+volatile unsigned long cursor;
+
 /*=====================================================*/
 
 /*================* Pin Destination *=================*/

@@ -3,7 +3,10 @@
 #include "lcd_font.h"
 char ascii_8x16[1536];
 
-
+volatile unsigned int LCD_Window_StartX;
+volatile unsigned int LCD_Window_StartY;
+volatile unsigned int LCD_Window_EndX;
+volatile unsigned int LCD_Window_EndY;
 /****************************************************************************
 * void ssd1963_Initialization()
 *
@@ -14,9 +17,7 @@ char ascii_8x16[1536];
 ****************************************************************************/
 void ssd1963_Initialization()
 {
-    int i;
-    
-    
+    int i;    
     //Initialize signal pins as outputs
     /*LCD_Data_L_TRIS = 0;
     LCD_Data_H_TRIS = 0;
@@ -147,8 +148,23 @@ void ssd1963_Initialization()
     ssd1963_WriteIndex(0x00ba);
     ssd1963_WriteData(0x0001);
     
+    
+    
     GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
     
+    GPIO_ResetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Clr_Cs;
+    ssd1963_WriteIndex(0x2a);        //SET column address
+    ssd1963_WriteData(0 / 0x0100);            //SET start column address=0
+    ssd1963_WriteData(0 & 0x00FF);
+    ssd1963_WriteData(481 / 0x0100);            //SET end column address=479
+    ssd1963_WriteData(481 & 0x00FF);
+
+    ssd1963_WriteIndex(0x2b);        //SET page address
+    ssd1963_WriteData(0 / 0x0100);            //SET start page address=0
+    ssd1963_WriteData(0 & 0x00FF);
+    ssd1963_WriteData(272 / 0x0100);            //SET end page address=271
+    ssd1963_WriteData(272 & 0x00FF);
+    GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
     //Turn On the backlight
     ssd1963_BackLight(1);
 }
@@ -164,6 +180,12 @@ void ssd1963_Initialization()
 ****************************************************************************/
 void ssd1963_SetCursor(unsigned int x,unsigned int y)
 {
+#if(LCD_Buffered)
+  {
+    cursor=482*y+x;
+  }
+#else
+  {
     GPIO_ResetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Clr_Cs;
     ssd1963_WriteIndex(0x2a);        //SET column address
     ssd1963_WriteData(x / 0x0100);            //SET start column address=0
@@ -177,6 +199,8 @@ void ssd1963_SetCursor(unsigned int x,unsigned int y)
     ssd1963_WriteData(0x01);            //SET end page address=271
     ssd1963_WriteData(0x0F);
     GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -192,6 +216,16 @@ void ssd1963_SetCursor(unsigned int x,unsigned int y)
 ****************************************************************************/
 void ssd1963_SetWindows(unsigned int StartX,unsigned int StartY,unsigned int EndX,unsigned int EndY)
 {
+#if(LCD_Buffered)
+  {
+    LCD_Window_StartX=StartX;
+    LCD_Window_StartY=StartY;
+    LCD_Window_EndX=EndX;
+    LCD_Window_EndY=EndY;
+    ssd1963_SetCursor(StartX,StartY);
+  }
+#else
+  {
     GPIO_ResetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Clr_Cs;
     ssd1963_WriteIndex(0x2a);        //SET column address
     ssd1963_WriteData(StartX / 0x0100);            //SET start column address=0
@@ -205,6 +239,8 @@ void ssd1963_SetWindows(unsigned int StartX,unsigned int StartY,unsigned int End
     ssd1963_WriteData(EndY / 0x0100);            //SET end page address=271
     ssd1963_WriteData(EndY & 0x00FF);
     GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -217,6 +253,15 @@ void ssd1963_SetWindows(unsigned int StartX,unsigned int StartY,unsigned int End
 ****************************************************************************/
 void ssd1963_Clear(unsigned int dat)
 {
+#if(LCD_Buffered)
+  {
+    ssd1963_SetWindows(0, 0, 479, 271);
+    for(int i=0;i<130560;i++)
+        LCD_WriteBuff(dat);
+   
+  }
+#else
+  {
   long  i;
 
   ssd1963_SetWindows(0, 0, 479, 271);
@@ -231,6 +276,8 @@ void ssd1963_Clear(unsigned int dat)
  
 
   GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -246,22 +293,16 @@ void ssd1963_Clear(unsigned int dat)
 ****************************************************************************/
 void ssd1963_ClearZone(unsigned int x,unsigned int y,unsigned int dX, unsigned int dY,unsigned int Color)
 {
-  /*if(LCD_Buffered)
+#if(LCD_Buffered)
   {
     static unsigned int i, j;
-
-    ssd1963_SetWindows(x, y, (x+dX-1), (y+dY-1));
-
-    GPIO_ResetBits(GPIOC,LCD_CTRL_PIN_CS);//Clr_Cs;
-    ssd1963_WriteIndex(0x002c);
-    GPIO_SetBits(GPIOC,LCD_CTRL_PIN_RS);//Set_Rs;
-  
+    ssd1963_SetWindows(x, y, (x+dX), (y+dY));
     for (i=0; i<dX; i++)
         for(j=0; j<dY; j++)
-            ssd1963_WriteData(Color);
+            LCD_WriteBuff(Color);    
   }
-  else
-  {*/
+#else
+  {
     static unsigned int i, j;
 
     ssd1963_SetWindows(x, y, (x+dX-1), (y+dY-1));
@@ -272,12 +313,11 @@ void ssd1963_ClearZone(unsigned int x,unsigned int y,unsigned int dX, unsigned i
   
     for (i=0; i<dX; i++)
         for(j=0; j<dY; j++)
-            ssd1963_WriteData(Color);
-  //}
-
-    
+            ssd1963_WriteData(Color);    
     
     GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -291,6 +331,14 @@ void ssd1963_ClearZone(unsigned int x,unsigned int y,unsigned int dX, unsigned i
 ****************************************************************************/
 void ssd1963_SetPoint(unsigned int x,unsigned int y,unsigned int point)
 {
+#if(LCD_Buffered)
+  {
+    //if ( (x>479)||(y>271) ) return;
+    ssd1963_SetCursor(x,y);
+    LCD_WriteBuff(point);
+  }
+#else
+  {
   if ( (x>479)||(y>271) ) return;
 
   ssd1963_SetCursor(x,y);
@@ -300,6 +348,8 @@ void ssd1963_SetPoint(unsigned int x,unsigned int y,unsigned int point)
   GPIO_SetBits(LCD_CTRL_PORT_RS,LCD_CTRL_PIN_RS);//Set_Rs;
   ssd1963_WriteData(point);
   GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -315,6 +365,16 @@ void ssd1963_SetPoint(unsigned int x,unsigned int y,unsigned int point)
 ****************************************************************************/
 void ssd1963_DrawPicture(unsigned int StartX,unsigned int StartY,unsigned int EndX,unsigned int EndY,unsigned int* pic)
 {
+#if(LCD_Buffered)
+  {
+    unsigned int  i;
+    ssd1963_SetWindows(StartX,StartY,EndX,EndY);
+    ssd1963_SetCursor(StartX,StartY);
+    for (i=0;i<(EndX*EndY);i++)  
+      LCD_WriteBuff(*pic++);  
+  }
+#else
+  {
   unsigned int  i;
   ssd1963_SetWindows(StartX,StartY,EndX,EndY);
   ssd1963_SetCursor(StartX,StartY);
@@ -327,6 +387,8 @@ void ssd1963_DrawPicture(unsigned int StartX,unsigned int StartY,unsigned int En
       ssd1963_WriteData(*pic++);
   }
   GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -342,11 +404,36 @@ void ssd1963_DrawPicture(unsigned int StartX,unsigned int StartY,unsigned int En
 ****************************************************************************/
 void ssd1963_PutChar(unsigned int x,unsigned int y,unsigned char c,unsigned int charColor,unsigned int bkColor)
 {
+#if(LCD_Buffered)
+  {
+    static unsigned int i=0;
+    static unsigned int j=0;  
+    static unsigned char tmp_char=0;  
+    static unsigned int k;
+    for (i=0;i<16;i++)
+  {
+      k=c-0x20;
+      k=k*16+i;
+      tmp_char=ascii_8x16[k];
+    for (j=0;j<8;j++)
+    {
+      if ( (tmp_char >> 7-j) & 0x01 == 0x01)
+        {
+          ssd1963_SetPoint(x+j,y+i,charColor); // �ַ���ɫ
+        }
+        else
+        {
+          if(bkColor!=Transparent)
+            ssd1963_SetPoint(x+j,y+i,bkColor); // ������ɫ
+        }
+    }
+  }
+  }
+#else
+  {
   static unsigned int i=0;
-  static unsigned int j=0;
-  
-  static unsigned char tmp_char=0;
-  
+  static unsigned int j=0;  
+  static unsigned char tmp_char=0;  
   static unsigned int k;
 
   for (i=0;i<16;i++)
@@ -367,6 +454,8 @@ void ssd1963_PutChar(unsigned int x,unsigned int y,unsigned char c,unsigned int 
         }
     }
   }
+ }
+#endif
 }
 
 
@@ -408,6 +497,11 @@ void ssd1963_PutText(unsigned int x,unsigned int y,char *pString,unsigned int ch
 ****************************************************************************/
 void ssd1963_Test()
 {
+#if(LCD_Buffered)
+  {
+  }
+#else
+  {
   unsigned char  R_data,G_data,B_data,i,j;
 
 	ssd1963_SetCursor(0x00, 0x0000);
@@ -479,6 +573,8 @@ void ssd1963_Test()
 		}
     }	  
 	GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  }
+#endif
 }
 
 /****************************************************************************
@@ -559,6 +655,7 @@ void ssd1963_WriteRegister(unsigned int index,unsigned int data)
     GPIO_ResetBits(LCD_CTRL_PORT_WR,LCD_CTRL_PIN_WR);//Clr_nWr;
     GPIO_SetBits(LCD_CTRL_PORT_WR,LCD_CTRL_PIN_WR);//Set_nWr;
     GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  
 }
 
 /****************************************************************************
@@ -568,8 +665,10 @@ void ssd1963_WriteRegister(unsigned int index,unsigned int data)
 *
 * Example uf use: ssd1963_Reset();
 ****************************************************************************/
+
 void ssd1963_Reset()
 {
+  
   /***************************************
    **                                   **
    **  -------\______________/-------   **
@@ -693,6 +792,29 @@ void LCD_Fill_Circle(int Xpos, int Ypos, int Radius,unsigned int Color)
 
 void ssd1963_Write(int data)
 {
+  /*
+  GPIOA->ODR&=0x30;//0b0000 0000 0011 0000
+  GPIOA->ODR|=(data&0xFFCF);//0b1111 1111 1100 1111
+ 
+  GPIOB->ODR&=0xFFCF;
+  GPIOB->ODR|=(data&0x30);
+  */
+  /*
+  GPIO_ResetBits(GPIOA,(uint16_t)0xFFCF);
+  GPIO_ResetBits(GPIOB,(uint16_t)0x30);
+  
+  GPIO_SetBits(GPIOA,(uint16_t)(data&0xFFCF));  
+  GPIO_SetBits(GPIOB,(uint16_t)(data&0x30));
+  */
+ 
+ /* GPIO_ResetBits(GPIOA,GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
+  GPIO_ResetBits(GPIOB,GPIO_Pin_4|GPIO_Pin_5);
+  
+  GPIO_SetBits(GPIOA,data&(GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15));
+  GPIO_SetBits(GPIOB,data&(GPIOB,GPIO_Pin_4|GPIO_Pin_5));
+ */
+ 
+  
   GPIO_WriteBit(LCD_DATA_PORT_DB0,LCD_DATA_PIN_DB0,(data&(1<<0))>>0);
   GPIO_WriteBit(LCD_DATA_PORT_DB1,LCD_DATA_PIN_DB1,(data&(1<<1))>>1);
   GPIO_WriteBit(LCD_DATA_PORT_DB2,LCD_DATA_PIN_DB2,(data&(1<<2))>>2);
@@ -709,4 +831,53 @@ void ssd1963_Write(int data)
   GPIO_WriteBit(LCD_DATA_PORT_DB13,LCD_DATA_PIN_DB13,(data&(1<<13))>>13);
   GPIO_WriteBit(LCD_DATA_PORT_DB14,LCD_DATA_PIN_DB14,(data&(1<<14))>>14);
   GPIO_WriteBit(LCD_DATA_PORT_DB15,LCD_DATA_PIN_DB15,(data&(1<<15))>>15);
+  
 }
+void LCD_WriteBuff(unsigned int data)
+{
+  ImageToWrite[cursor++]=data;
+  unsigned long cursor_at_end_of_first_line=(482*LCD_Window_StartY+LCD_Window_StartX)+(LCD_Window_EndX-LCD_Window_StartX);
+  if(cursor==(cursor_at_end_of_first_line+((int)((cursor-cursor_at_end_of_first_line)/482))*482))
+    cursor+=(482-(LCD_Window_EndX-LCD_Window_StartX));
+}
+
+void LCD_Refresh()
+{
+#if(LCD_Buffered)
+    GPIO_ResetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Clr_Cs; 
+    ssd1963_WriteIndex(0x002c);
+    GPIO_SetBits(LCD_CTRL_PORT_RS,LCD_CTRL_PIN_RS);//Set_Rs;
+  
+    for (long i=0; i<482*272; i++)        
+            ssd1963_WriteData(LCD_buff[i]);
+
+  GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
+  
+  
+#endif
+}
+  static int xcoord;
+void Clean_LCD_Buff()
+{
+  for(long i=0;i<481*273;i++)
+   LCD_buff[i]=0;
+    
+ /*ssd1963_SetWindows(10,50,160,210);
+    for (long i=0; i<150*150; i++)
+    {
+            LCD_WriteBuff(0xFFFF);
+            
+            //wait(100);
+            
+    }
+   LCD_Refresh();*/
+/*while(1)
+{
+  ssd1963_SetPoint(50,0,0xFFFF);
+  ssd1963_SetPoint(50,1,Green);
+  ssd1963_SetPoint(50,20,Red);
+      LCD_Refresh();
+     // wait(1);
+}*/
+}
+

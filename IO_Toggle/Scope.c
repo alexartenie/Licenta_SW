@@ -11,8 +11,8 @@ void Activate_Scope()
     sample_counter=0;
     last_sample_count=0;
     Scope_ADC_init();
-    if(Scope_Grid_Enabled)
-    Draw_Scope_Window();
+    
+      Draw_Scope_Window();
     TIM_ScopeTrig_init(Scope_Sample_Rate);
   }
 }
@@ -76,14 +76,14 @@ void Scope_Clear_Path(int X)
 {
   static int last_clear_rectangle;
   int Divs=((int)(X/Scope_Grid+1))*Scope_Grid;
-  if((X+Scope_Dot_Size+3+Scope_Grid)<Scope_Window_dX-1)
+  if((X+Scope_Dot_Size+3+Scope_Grid)<Scope_Window_dX-2)
   {
     
     LCD_Draw_Rectangle(X+Scope_Dot_Size+3,4,Scope_Grid,Scope_Window_dY-7,Black);
     last_clear_rectangle=X;
     
   for(int i=3;i<Scope_Window_dY-2;i+=Scope_Grid)
-    ssd1963_PutLine(X+Scope_Dot_Size+2,i,'X',Scope_Grid,Scope_Grid_Color);
+    ssd1963_PutLine(X+Scope_Dot_Size+3,i,'X',Scope_Grid,Scope_Grid_Color);
   
   ssd1963_PutLine(Divs+3,3,'Y',Scope_Window_dY-6,Scope_Grid_Color);
   }
@@ -102,7 +102,8 @@ void Draw_Scope_Grid()
 
 void Draw_Scope_Window()
 {
-   Draw_Scope_Grid();
+  if(Scope_Grid_Enabled)
+      Draw_Scope_Grid();
    //Draw Signal Frame
   ssd1963_PutLine(0,0,'X',Scope_Window_dX,Blue);
   ssd1963_PutLine(2,2,'X',Scope_Window_dX-4,Blue);
@@ -186,6 +187,7 @@ void Draw_Scope_Window()
   Add_Button(&But_Trig);
   
 }
+
 
 
 
