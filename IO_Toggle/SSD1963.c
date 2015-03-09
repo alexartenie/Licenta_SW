@@ -223,6 +223,7 @@ void ssd1963_SetWindows(unsigned int StartX,unsigned int StartY,unsigned int End
     LCD_Window_EndX=EndX;
     LCD_Window_EndY=EndY;
     ssd1963_SetCursor(StartX,StartY);
+    cursor_at_end_of_first_line = (482*LCD_Window_StartY+LCD_Window_StartX)+(LCD_Window_EndX-LCD_Window_StartX);    
   }
 #else
   {
@@ -792,21 +793,14 @@ void LCD_Fill_Circle(int Xpos, int Ypos, int Radius,unsigned int Color)
 
 void ssd1963_Write(int data)
 {
-  /*
+  
   GPIOA->ODR&=0x30;//0b0000 0000 0011 0000
   GPIOA->ODR|=(data&0xFFCF);//0b1111 1111 1100 1111
  
   GPIOB->ODR&=0xFFCF;
   GPIOB->ODR|=(data&0x30);
-  */
-  /*
-  GPIO_ResetBits(GPIOA,(uint16_t)0xFFCF);
-  GPIO_ResetBits(GPIOB,(uint16_t)0x30);
-  
-  GPIO_SetBits(GPIOA,(uint16_t)(data&0xFFCF));  
-  GPIO_SetBits(GPIOB,(uint16_t)(data&0x30));
-  */
- 
+  wait(2);
+
  /* GPIO_ResetBits(GPIOA,GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3|GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
   GPIO_ResetBits(GPIOB,GPIO_Pin_4|GPIO_Pin_5);
   
@@ -814,7 +808,7 @@ void ssd1963_Write(int data)
   GPIO_SetBits(GPIOB,data&(GPIOB,GPIO_Pin_4|GPIO_Pin_5));
  */
  
-  
+  /*
   GPIO_WriteBit(LCD_DATA_PORT_DB0,LCD_DATA_PIN_DB0,(data&(1<<0))>>0);
   GPIO_WriteBit(LCD_DATA_PORT_DB1,LCD_DATA_PIN_DB1,(data&(1<<1))>>1);
   GPIO_WriteBit(LCD_DATA_PORT_DB2,LCD_DATA_PIN_DB2,(data&(1<<2))>>2);
@@ -830,15 +824,14 @@ void ssd1963_Write(int data)
   GPIO_WriteBit(LCD_DATA_PORT_DB12,LCD_DATA_PIN_DB12,(data&(1<<12))>>12);
   GPIO_WriteBit(LCD_DATA_PORT_DB13,LCD_DATA_PIN_DB13,(data&(1<<13))>>13);
   GPIO_WriteBit(LCD_DATA_PORT_DB14,LCD_DATA_PIN_DB14,(data&(1<<14))>>14);
-  GPIO_WriteBit(LCD_DATA_PORT_DB15,LCD_DATA_PIN_DB15,(data&(1<<15))>>15);
+  GPIO_WriteBit(LCD_DATA_PORT_DB15,LCD_DATA_PIN_DB15,(data&(1<<15))>>15);*/
   
 }
 void LCD_WriteBuff(unsigned int data)
 {
-  ImageToWrite[cursor++]=data;
-  unsigned long cursor_at_end_of_first_line=(482*LCD_Window_StartY+LCD_Window_StartX)+(LCD_Window_EndX-LCD_Window_StartX);
-  if(cursor==(cursor_at_end_of_first_line+((int)((cursor-cursor_at_end_of_first_line)/482))*482))
-    cursor+=(482-(LCD_Window_EndX-LCD_Window_StartX));
+  ImageToWrite[cursor++]=data;  
+  if(cursor==cursor_at_end_of_first_line+((int)((cursor-cursor_at_end_of_first_line)/482))*482)
+    cursor+=(482-(LCD_Window_EndX-LCD_Window_StartX));  
 }
 
 void LCD_Refresh()
@@ -848,19 +841,24 @@ void LCD_Refresh()
     ssd1963_WriteIndex(0x002c);
     GPIO_SetBits(LCD_CTRL_PORT_RS,LCD_CTRL_PIN_RS);//Set_Rs;
   
-    for (long i=0; i<482*272; i++)        
-            ssd1963_WriteData(LCD_buff[i]);
+    for (long i=0; i<482*272; i++)   
+    {      
+          ssd1963_WriteData(LCD_buff[i]);      
+    }
 
-  GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;
-  
+  GPIO_SetBits(LCD_CTRL_PORT_CS,LCD_CTRL_PIN_CS);//Set_Cs;  
   
 #endif
 }
   static int xcoord;
 void Clean_LCD_Buff()
 {
+  ImageToWrite = LCD_buff;
   for(long i=0;i<481*273;i++)
+  {
    LCD_buff[i]=0;
+   LCD_RshMsk[i]=1;
+  }
     
  /*ssd1963_SetWindows(10,50,160,210);
     for (long i=0; i<150*150; i++)

@@ -32,21 +32,18 @@ int main(void)
   create_task("ScopeA",0,0,&ScopeAGetData);
  // create_task("Nope",0,0,&Nope_task);
   create_task("TOUCH",0,20,&Check_Touch_task); 
-  ImageToWrite = LCD_buff;
-   SystemInit();
-   
+  
+  SystemInit();   
   Device_Init();
-    
-  char print[30];
-   Clean_LCD_Buff();
   FMC_Init();
   Clean_LCD_Buff();
+  Prepare_Scope_Image();
   Activate_Scope();
     
-   for(int i=0;i<50;i++)
+ /*  for(int i=0;i<50;i++)
     ScopeA_buff[i]=i*2;
   for(int i=0;i<50;i++)
-    ScopeA_buff[50+i]=(50-i)*2; 
+    ScopeA_buff[50+i]=(50-i)*2;*/
   
   NVIC_init();  
   SysTick_Config(SystemCoreClock / 1000);
@@ -62,7 +59,7 @@ int main(void)
 
 void Blink_task()
 {
-  GPIO_ToggleBits(LED1_PORT,LED1_PIN);
+  //GPIO_ToggleBits(LED1_PORT,LED1_PIN);
   //sys_scheduler();
  // GPIO_ToggleBits(TOUCH_CS_PORT,TOUCH_CS_BIT);
 }
@@ -72,7 +69,7 @@ void ADC_IRQHandler(void)
 {
   if(ADC_GetITStatus(ADC1,ADC_IT_EOC)!=RESET)
     {
-      static int R=20;
+      
       ADC_ClearFlag(ADC1,ADC_IT_EOC);
       ADC_ClearITPendingBit(ADC1,ADC_IT_EOC);
       ADC_IRQ();
@@ -101,7 +98,9 @@ void SysTick_Handler()
 void LCD_Refresh_task()
 {   
   //  GPIO_SetBits(LED1_PORT,LED1_PIN);
+  
      LCD_Refresh();
+      
     // GPIO_ResetBits(LED1_PORT,LED1_PIN);
    //  sys_scheduler();
      // sample_counter=0;
@@ -119,8 +118,7 @@ void Check_Touch_task()
 }
 
 void ScopeAGetData()
-{
-      
+{      
   char print[30];
   r++;
   if(r>98)
@@ -130,26 +128,37 @@ void ScopeAGetData()
      if(i>98)
        i=0;     
     // for(int i=x_old;i<100;i++)
-     
+     if(last_sample_count<sample_counter)
      {
-       
+       for(int j=last_sample_count;j<sample_counter;j++)
+       {
+       static int shown;
+       shown++;
       //y=(sample_buff[i]-20)*10;
-      y=Scope_Window_dY/2+ScopeA_Offset-ScopeA_buff[i]/2;//-sample_buff[i];     
-       x+=1;//Scope_X_Step;
+      y = Scope_Window_dY/2 + ScopeA_Offset-((((3300*ScopeA_buff[i])/4095) * Scope_Grid) / ScopeA_Volt_Scale); 
+        // Middle of frame     User Offset       Buffer value in mV             
+      
+      float dx=(Scope_Time_Scale*Scope_Grid)/Scope_Sample_Rate;
+     // float dx=0.25;
+       x += dx/1000;//Scope_X_Step;
+       
+       int x_pos=x;
+       sprintf(print,"X:%d",shown);
+      ssd1963_PutText(10,235,print,White,Black);
        if(x>Scope_Window_dX-8)
         x=0;
       if(Scope_Autoclear)
         Scope_Clear_Path(x);
-      LCD_Draw_Rectangle(x+3,y,Scope_Dot_Size,Scope_Dot_Size,ScopeA_Color);
+      LCD_Draw_Rectangle((int)(x+3),(int)y,Scope_Dot_Size,Scope_Dot_Size,ScopeA_Color);
       if(Scope_Use_Interpolation)
       {
         Draw_Line(x_old,y_old,x,y,ScopeA_Color);
         x_old=x;
         y_old=y;
-      }
-     }
-     
+      }     
+       }
      last_sample_count=sample_counter;
+     }
      //sys_scheduler();
 }
 

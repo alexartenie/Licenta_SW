@@ -47,7 +47,7 @@
 
 #define CPU_CLOCK 168000000
 #define APB1_CLOCK 42000000
-#define Clock_Calibration 1.166555
+#define Clock_Calibration 1.026694
 #define Scope_ADC_Burst 1000
 #define Scope_TIM TIM2
 #define Scope_Grid 25
@@ -59,20 +59,23 @@
 /*======External RAM viriable locations *=============*/
 #define RAM_SCOPEA_SIZE 10000000
 #define RAM_SCOPEB_SIZE 10000000
-#define RAM_LCD_SIZE    130560
+#define RAM_LCD_SIZE    131104
+unsigned volatile long cursor_at_end_of_first_line;
 unsigned long *ScopeA_buff = (unsigned long *)(0xC0000000);  
 unsigned long *ScopeB_buff = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE);
 unsigned long *LCD_buff    = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE);
-unsigned long *Start_Image = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*1);
-unsigned long *Scope_Image = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*2);
+unsigned long *LCD_RshMsk  = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*1);
+unsigned long *Start_Image = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*2);
+unsigned long *Scope_Image = (unsigned long *)(0xC0000000+RAM_SCOPEA_SIZE+RAM_SCOPEB_SIZE+RAM_LCD_SIZE*3);
 unsigned long *ImageToWrite;
 /*====================================================*/
 
 /*===============* Constants for System State *=========*/
 #define Active_Scope_Channels    1
-#define Scope_Sample_Rate        10
-#define ScopeA_Time_Scale        1000
-#define Scope_Sample_Period      (1000/Scope_Sample_Rate)
+#define Scope_Sample_Rate        100//S/s
+int Scope_Time_Scale;           //ms/Div
+int ScopeA_Volt_Scale;           //mV/s
+#define Scope_Sample_Period      (1/Scope_Sample_Rate)
 float Scope_X_Step;
 #define ScopeA_Color             Yellow
 #define Scope_Use_Interpolation  0
@@ -82,7 +85,7 @@ int CAN_Active;
 int AWG_Active;
 int ScopeA_Offset;
 int ScopeB_Offset;
-#define Scope_Dot_Size           1
+#define Scope_Dot_Size           2
 /*=====================================================*/
 
 /*=============* System Configuration *==============*/
@@ -127,7 +130,8 @@ void ScopeAGetData(void);
 int sample_counter;
 int last_sample_count;
 volatile int sample_buff[];
-volatile int x,y,x_old,y_old;
+volatile float x,x_old;
+volatile int y,y_old;
 volatile unsigned long cursor;
 
 /*=====================================================*/

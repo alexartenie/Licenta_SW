@@ -3,6 +3,8 @@
 void Scope_Clear_Path(int);
 void Draw_Scope_Grid();
 void Draw_Scope_Window();
+void Load_Scope_Image();
+
 void Activate_Scope()
 {
   if(Scope_Active==0)
@@ -10,9 +12,11 @@ void Activate_Scope()
     Scope_Active=1;
     sample_counter=0;
     last_sample_count=0;
-    Scope_ADC_init();
-    
-      Draw_Scope_Window();
+    ScopeA_Volt_Scale=1000;//mV/div
+    Scope_Time_Scale=1000;//ms/div
+    Scope_ADC_init();    
+    //Draw_Scope_Window();
+    Load_Scope_Image();
     TIM_ScopeTrig_init(Scope_Sample_Rate);
   }
 }
@@ -27,7 +31,9 @@ void ADC_IRQ()
    //sample_counter++;
     
    
-   sample_buff[sample_counter++]=ADC_GetConversionValue(ADC1);
+   //sample_buff[sample_counter++]=ADC_GetConversionValue(ADC1);
+   //GPIO_ToggleBits(LED1_PORT,LED1_PIN);
+   ScopeA_buff[sample_counter++]=ADC_GetConversionValue(ADC1);
    /*static int b;
    char print[20];
    sprintf(print,"ADC IRQ:%d",sample_counter);
@@ -101,7 +107,7 @@ void Draw_Scope_Grid()
 }
 
 void Draw_Scope_Window()
-{
+{ 
   if(Scope_Grid_Enabled)
       Draw_Scope_Grid();
    //Draw Signal Frame
@@ -188,6 +194,104 @@ void Draw_Scope_Window()
   
 }
 
+void Prepare_Scope_Image()
+{
+  ImageToWrite = Scope_Image;
+  for(long i=0;i<481*273;i++)
+  {
+    ImageToWrite[i]=0;    
+  }
+  
+  if(Scope_Grid_Enabled)
+      Draw_Scope_Grid();
+   //Draw Signal Frame
+  ssd1963_PutLine(0,0,'X',Scope_Window_dX,Blue);
+  ssd1963_PutLine(2,2,'X',Scope_Window_dX-4,Blue);
+  ssd1963_PutLine(2,Scope_Window_dY-2,'X',Scope_Window_dX-4,Blue);
+  ssd1963_PutLine(0,Scope_Window_dY,'X',Scope_Window_dX,Blue);
+  
+  ssd1963_PutLine(0,0,'Y',Scope_Window_dY,Blue);
+  ssd1963_PutLine(2,2,'Y',Scope_Window_dY-4,Blue);
+  ssd1963_PutLine(Scope_Window_dX-2,2,'Y',Scope_Window_dY-4,Blue);
+  ssd1963_PutLine(Scope_Window_dX,0,'Y',Scope_Window_dY,Blue);
+     
+  //Draw Setup Frame
+  ssd1963_PutLine(Scope_Window_dX+1,0,'X',480-(Scope_Window_dX+1),Blue);
+  ssd1963_PutLine(Scope_Window_dX+3,2,'X',478-(Scope_Window_dX+1)-2,Blue);
+  ssd1963_PutLine(Scope_Window_dX+3,Scope_Window_dY-2,'X',478-(Scope_Window_dX+1)-2,Blue);
+  ssd1963_PutLine(Scope_Window_dX+1,Scope_Window_dY,'X',480-(Scope_Window_dX+1),Blue);
+  
+  ssd1963_PutLine(Scope_Window_dX+1,0,'Y',Scope_Window_dY,Blue);
+  ssd1963_PutLine(Scope_Window_dX+3,3,'Y',Scope_Window_dY-5,Blue);
+  ssd1963_PutLine(477,3,'Y',Scope_Window_dY-5,Blue);
+  ssd1963_PutLine(479,0,'Y',Scope_Window_dY,Blue);
+  
+  //Draw Measurement Frame
+  ssd1963_PutLine(0,Scope_Window_dY+1,'X',Scope_Window_dX,Blue);
+  ssd1963_PutLine(2,Scope_Window_dY+3,'X',Scope_Window_dX-4,Blue);
+  ssd1963_PutLine(2,269,'X',Scope_Window_dX-4,Blue);
+  ssd1963_PutLine(0,271,'X',Scope_Window_dX,Blue);
+  
+  ssd1963_PutLine(0,Scope_Window_dY+1,'Y',271-Scope_Window_dY,Blue);
+  ssd1963_PutLine(2,Scope_Window_dY+3,'Y',271-Scope_Window_dY-4,Blue);
+  ssd1963_PutLine(Scope_Window_dX-2,Scope_Window_dY+3,'Y',271-Scope_Window_dY-2,Blue);
+  ssd1963_PutLine(Scope_Window_dX,Scope_Window_dY+1,'Y',271-Scope_Window_dY,Blue);
+  
+  //Draw Menu Frame
+  ssd1963_PutLine(Scope_Window_dX+1,Scope_Window_dY+1,'X',480-Scope_Window_dX,Blue);
+  ssd1963_PutLine(Scope_Window_dX+3,Scope_Window_dY+3,'X',480-Scope_Window_dX,Blue);
+  ssd1963_PutLine(Scope_Window_dX+3,269,'X',480-Scope_Window_dX,Blue);
+  ssd1963_PutLine(Scope_Window_dX+1,271,'X',480-Scope_Window_dX,Blue);
+  
+  ssd1963_PutLine(Scope_Window_dX+1,Scope_Window_dY+1,'Y',271-Scope_Window_dY,Blue);
+  ssd1963_PutLine(Scope_Window_dX+3,Scope_Window_dY+3,'Y',271-Scope_Window_dY-3,Blue);
+  ssd1963_PutLine(477,Scope_Window_dY+3,'Y',271-Scope_Window_dY-1,Blue);
+  ssd1963_PutLine(479,Scope_Window_dY+1,'Y',271-Scope_Window_dY,Blue);
+  
+  //Menu Text
+  char menu_txt[5];
+  sprintf(menu_txt,"MENU");
+  ssd1963_PutText(405,245,menu_txt,Yellow,Black);
+  
+  //Volt Setup Button
+  Button But_Volt;
+  Init_Button(&But_Volt);
+  But_Volt.Text_Align_X=TEXT_ALIGN_CENTER;
+  But_Volt.Text_Align_Y=TEXT_ALIGN_CENTER;
+  But_Volt.x=391;
+  But_Volt.y=10;
+  But_Volt.dx=80;
+  But_Volt.text="VOLT";
+  Add_Button(&But_Volt);
+  
+   //Time Setup Button
+  Button But_Time;
+  Init_Button(&But_Time);
+  But_Time.Text_Align_X=TEXT_ALIGN_CENTER;
+  But_Time.Text_Align_Y=TEXT_ALIGN_CENTER;
+  But_Time.x=391;
+  But_Time.y=45;
+  But_Time.dx=80;
+  But_Time.text="TIME";
+  Add_Button(&But_Time);
+  
+   //Trig Setup Button
+  Button But_Trig;
+  Init_Button(&But_Trig);
+  But_Trig.Text_Align_X=TEXT_ALIGN_CENTER;
+  But_Trig.Text_Align_Y=TEXT_ALIGN_CENTER;
+  But_Trig.x=391;
+  But_Trig.y=80;
+  But_Trig.dx=80;
+  But_Trig.text="TRIG";
+  Add_Button(&But_Trig);
+}
 
+void Load_Scope_Image()
+{
+  ImageToWrite = LCD_buff;
+  for(long i=0;i<481*273;i++)
+    LCD_buff[i]=Scope_Image[i];
+}
 
 

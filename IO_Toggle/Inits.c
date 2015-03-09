@@ -502,13 +502,15 @@ void Scope_ADC_init()
   ADC_InitTypeDef ADC_InitStructure;
   
   ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_Rising;
-  ADC_InitStructure.ADC_Resolution = ADC_Resolution_10b;
+  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
   ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_TRGO;
   ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStructure.ADC_NbrOfConversion = 2;
+  ADC_InitStructure.ADC_NbrOfConversion = 1;
+  
   ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 1, ADC_SampleTime_3Cycles);
   if(Active_Scope_Channels==2)
   {
+    ADC_InitStructure.ADC_NbrOfConversion = 2;
     ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 2, ADC_SampleTime_3Cycles);
     ADC_InitStructure.ADC_ScanConvMode=ENABLE;
   }
@@ -519,7 +521,7 @@ void Scope_ADC_init()
   ADC_Init(ADC1, &ADC_InitStructure);
   ADC_ITConfig(ADC1,ADC_IT_EOC,ENABLE);  
   ADC_Cmd(ADC1, ENABLE);  
-  ADC_DMACmd(ADC1, ENABLE);
+ // ADC_DMACmd(ADC1, ENABLE);
 }
 
 /*==============* DMA Initialization *===================*/
@@ -581,8 +583,8 @@ void NVIC_init()
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);*/
     
-   // NVIC_EnableIRQ(ADC_IRQn);
-     NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+    NVIC_EnableIRQ(ADC_IRQn);
+   //  NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 }
 
 /*=========* Timer for Scope ADC Trig *============*/
@@ -599,7 +601,7 @@ void TIM_ScopeTrig_init(int freq)
    
    timerInitStructure.TIM_Prescaler = 0;
    timerInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-   timerInitStructure.TIM_Period = (APB1_CLOCK/2/freq - 1)*Clock_Calibration;
+   timerInitStructure.TIM_Period = (84000000/freq - 1)*Clock_Calibration;
    timerInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
    timerInitStructure.TIM_RepetitionCounter = 0;
    TIM_TimeBaseInit(Scope_TIM, &timerInitStructure);
