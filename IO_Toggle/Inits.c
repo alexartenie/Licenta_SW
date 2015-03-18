@@ -1,5 +1,5 @@
 #include <main.h>
-#define ADC1_DR    ((uint32_t)0x4001244C)
+#define ADC1_DR    (0x4001204C)
 
 /*=============* Delay Function *================*/
 void wait(int time)
@@ -520,29 +520,33 @@ void Scope_ADC_init()
   }
   ADC_Init(ADC1, &ADC_InitStructure);
   ADC_ITConfig(ADC1,ADC_IT_EOC,ENABLE);  
+ // ADC_DMARequestAfterLastTransferCmd(ADC1,ENABLE);
+  //ADC_MultiModeDMARequestAfterLastTransferCmd(ENABLE);
+  
   ADC_Cmd(ADC1, ENABLE);  
- // ADC_DMACmd(ADC1, ENABLE);
+  
 }
-
+int buff[100];
 /*==============* DMA Initialization *===================*/
 void DMA_init()
 {
   
   //enable DMA1 clock
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);  
+  DMA_DeInit(DMA2_Stream0);
   //create DMA structure
   DMA_InitTypeDef  DMA_InitStructure;
   DMA_InitStructure.DMA_Channel = DMA_Channel_0;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&(ADC1->DR);
-  DMA_InitStructure.DMA_Memory0BaseAddr =(uint32_t)&sample_buff;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC1->DR);
+  DMA_InitStructure.DMA_Memory0BaseAddr =(uint32_t)(&buff);
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory ;
-  DMA_InitStructure.DMA_BufferSize = 8;
+  DMA_InitStructure.DMA_BufferSize = 100;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
@@ -550,11 +554,12 @@ void DMA_init()
   
   DMA_Init(DMA2_Stream0,&DMA_InitStructure);
   
+  
   //ADC_DMACmd(ADC1,ENABLE);
   
   DMA_ITConfig(DMA2_Stream0,DMA_IT_TC,ENABLE);
   DMA_Cmd(DMA2_Stream0,ENABLE);
-  
+  ADC_DMACmd(ADC1, ENABLE);
 /*  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1,ENABLE);
   DMA_InitTypeDef  DMA_InitStructure;
   DMA_DeInit(DMA1_Stream0);
@@ -576,15 +581,15 @@ void DMA_init()
 /*=============* Initilize Needed Interrupts *==============*/
 void NVIC_init()
 {
-   /* NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_InitStructure.NVIC_IRQChannel = ADC_IRQn;
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);*/
+    NVIC_Init(&NVIC_InitStructure);
     
-    NVIC_EnableIRQ(ADC_IRQn);
-   //  NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+    //NVIC_EnableIRQ(ADC_IRQn);
+     //NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 }
 
 /*=========* Timer for Scope ADC Trig *============*/
@@ -705,7 +710,7 @@ void PWM_Config(int dc)
 void Device_Init()
 {
   GPIO_init();  
-  DMA_init();
+  //DMA_init();
 #if(USE_SCOPE)
   /*Scope_X_Step=(Scope_Sample_Period*Scope_Grid)/ScopeA_Time_Scale;
   Scope_Active=0;

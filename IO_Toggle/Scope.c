@@ -12,7 +12,7 @@ void Activate_Scope()
     Scope_Active=1;
     sample_counter=0;
     last_sample_count=0;
-    ScopeA_Volt_Scale=1000;//mV/div
+    ScopeA_Volt_Scale=500;//mV/div
     Scope_Time_Scale=1000;//ms/div
     Scope_ADC_init();    
     //Draw_Scope_Window();

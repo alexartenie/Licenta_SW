@@ -72,7 +72,7 @@ unsigned long *ImageToWrite;
 
 /*===============* Constants for System State *=========*/
 #define Active_Scope_Channels    1
-#define Scope_Sample_Rate        100//S/s
+#define Scope_Sample_Rate        400//S/s
 int Scope_Time_Scale;           //ms/Div
 int ScopeA_Volt_Scale;           //mV/s
 #define Scope_Sample_Period      (1/Scope_Sample_Rate)
@@ -85,7 +85,7 @@ int CAN_Active;
 int AWG_Active;
 int ScopeA_Offset;
 int ScopeB_Offset;
-#define Scope_Dot_Size           2
+#define Scope_Dot_Size           1
 /*=====================================================*/
 
 /*=============* System Configuration *==============*/
