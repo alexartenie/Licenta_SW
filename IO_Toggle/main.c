@@ -70,7 +70,7 @@ void ADC_IRQHandler(void)
 {
   if(ADC_GetITStatus(ADC1,ADC_IT_EOC)!=RESET)
     {
-      
+      //GPIO_SetBits(LED1_PORT,LED1_PIN);
       ADC_ClearFlag(ADC1,ADC_IT_EOC);
       ADC_ClearITPendingBit(ADC1,ADC_IT_EOC);
       //ADC_IRQ();

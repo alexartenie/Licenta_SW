@@ -1109,10 +1109,6 @@
       <name>$PROJ_DIR$\main.c</name>
       <outputs>
         <tool>
-          <name>ICCARM</name>
-          <file> 37</file>
-        </tool>
-        <tool>
           <name>BICOMP</name>
           <file> 92</file>
         </tool>

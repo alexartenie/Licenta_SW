@@ -530,14 +530,14 @@ int buff[100];
 /*==============* DMA Initialization *===================*/
 void DMA_init()
 {
-  
+  int a=77;
   //enable DMA1 clock
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);  
   DMA_DeInit(DMA2_Stream0);
   //create DMA structure
   DMA_InitTypeDef  DMA_InitStructure;
   DMA_InitStructure.DMA_Channel = DMA_Channel_0;
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC1->DR);
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(ADC1_DR);
   DMA_InitStructure.DMA_Memory0BaseAddr =(uint32_t)(&buff);
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory ;
   DMA_InitStructure.DMA_BufferSize = 100;
@@ -588,7 +588,7 @@ void NVIC_init()
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
     
-    //NVIC_EnableIRQ(ADC_IRQn);
+    NVIC_EnableIRQ(ADC_IRQn);
      //NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 }
 
